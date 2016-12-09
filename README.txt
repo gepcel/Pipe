@@ -1,6 +1,8 @@
-修改，多数内容加 p 前缀
-因为有部分函数名重名，会覆盖原名称。比如：max all any reverse  等等
+* [The original `README` of the original package](#1)
+* [About the modifications](#2)
 
+<h1 id='1'>  </h1>
+----
 Help on module pipe:
 
 NAME
@@ -366,4 +368,61 @@ CREDITS
     Jerome Schneider, for its Python skillz,
     and dalexander for contributing
 
+----
+<h1 id='2'>Modifications:</h1>
 
+    [Julien](https://github.com/JulienPalard) did some wonderful work. I only do
+    the modifications for my personal use.
+
+### Change method names
+I want sometimes do something in pipeline. But I don't want always only do things 
+in pipeline.
+
+I don't use python for software developing or any real programming work. I just 
+use it to do daily data analyses. Since my datas are tiny, I care about 
+doing something easily, more than computing something quickly. So I always 
+automatically import many modules at the ipython startup, like `pylab`, `numpy`,
+`pandas`. There are some conflict
+like method `max`. Maybe it's easy to do like `[1, 5, 3] | max`, but sometimes 
+`max([1, 5, 3])` is needed. For some method not used so frequently, I may rely on
+the autocommplet, a **p** prefix to all method will be easy to locate when I don't
+remember the name.
+
+For some method used too frequently, there are transforms like `totype`, `tolist`,
+`dump`.
+
+### Add some new methods I used
+
+    ps --> pstr --str
+    pse --> pstre              # elementwise str
+    pnt --> pprint --> print
+    dump --> pdump -->ptofile  # save sth to a txt file
+    pmap --> map               # more intuitive than select
+    phelp --> help
+    plen --> pcount -->len
+
+**About `ptofile`**
+
+Example: `[1,2,3] | ptofile(filename=None, override=False, encoding=None, sep='\n')`
+If `filename` is `None`, a new file `temptxtfile.txt` is created under the 
+current folder, overrided if exists.
+
+If a `filename` is given, override if `override=True`, append to the end
+if `override=False`
+
+For an iterable left input, element is converted to `str` and joined by `sep`('\n' by default) 
+before write.
+
+### Different behavior of some original methods
+For methods like `pselect`, `pwhere`, always return `list` other than a generator.
+
+For method `pmap`, return `list` if left input is `list` or `range`, `type(input)` if not.
+
+### New operators
+
+* >
+* >>
+
+The `or |` operator is kept. And two operator are added. `|` and `>>` work the same.
+I realy like `>`, it's simple and intuitive, but not chainable. I can do something like 
+`[1,2,3] > pmap(str)`, but not like `[1,2,3] > pmap(str) > pmap(int)`.

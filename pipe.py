@@ -377,7 +377,7 @@ __all__ = [
     'pto_type', 'totype', 'pas_type', 'pastype', 'pas_list', 'pto_list', 
     'paslist', 'ptolist', 'tolist', 'pas_tuple', 'pastuple', 'pto_tuple', 
     'ptotuple', 'pas_dict', 'pasdict', 'pto_dict', 'ptodict', 'pnt', 'pstr',
-    'ps', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp'
+    'ps', 'pstre', 'pse', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp', 'pprint'
 ]
 
 class Pipe:
@@ -475,11 +475,6 @@ def pcount(iterable):
 @Pipe
 def plen(iterable):
     return len(iterable)
-
-@Pipe
-def plen(iterable):
-    "自定义的 len, 基本上就是返回原 len"
-    return(len(iterable))
 
 @Pipe
 def pmax(iterable, **kwargs):
@@ -650,29 +645,40 @@ if "izip" in dir(itertools):
 else:
     pizip = Pipe(zip)
 
-#
-#************************************
-# 自定义部分
-#************************************
-#
+
 # print the result
-pnt = Pipe(print)
+pnt = pprint = Pipe(print)
 
 # convert the result to str
 pstr = Pipe(str)
-ps = pstr
+@Pipe
+def pstre(x):
+    if hasattr(x,'__iter__') and not isinstance(x, str):
+        if type(x) is range:
+            tp = list
+        else:
+            tp = type(x)
+        return tp(map(str, x))
+    else:
+        return str(x)
+pse = pstre
+
+ps = pstr = Pipe(str)
 
 # dump the result to file
 @Pipe
 def ptofile(x, filename=None, override=False, encoding=None,
      sep=''):
-    if override: 
-        mode='w'
-    else:
-        mode='a'
+    if filename:
+        if override: 
+            mode='w'
+        else:
+            print("File already exists, add to the end")
+            mode='a'
     if not filename:
         import os
         filename = os.path.join(os.getcwd(), 'temptxtfile.txt')
+        mode='w'
     with open(filename, mode, encoding=encoding) as file:
         if hasattr(x,'__iter__') and not isinstance(x, str):
             x = map(str, x)

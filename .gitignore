@@ -12,6 +12,7 @@ develop-eggs
 __pycache__
 .installed.cfg
 .pipe.py.un~
+pipe.py~
 
 # Installer logs
 pip-log.txt
