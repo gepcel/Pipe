@@ -361,23 +361,24 @@ except ImportError:
     import __builtin__ as builtins
 
 
-__author__ = 'Julien Palard <julien@eeple.fr>'
+__author__ = 'gepcel based on Julien Palard <julien@eeple.fr>'
 __credits__ = """Jerome Schneider, for its Python skillz,
 and dalexander for contributing"""
-__date__ = '10 Nov 2010'
-__version__ = '1.4'
+__date__ = '09 Dec 2016'
+__version__ = '0.1 based on 1.4'
 __all__ = [
     'Pipe', 'ptake', 'ptail', 'pskip', 'pall', 'pany', 'paverage', 'pcount',
-    'pmax', 'pmin', 'pas_dict', 'ppermutations', 'pnetcat', 'pnetwrite',
-    'ptraverse', 'pconcat', 'pas_list', 'pas_tuple', 'pstdout', 'plineout',
+    'pmax', 'pmin', 'ppermutations', 'pnetcat', 'pnetwrite',
+    'ptraverse', 'pconcat', 'pstdout', 'plineout',
     'ptee', 'padd', 'pfirst', 'pchain', 'pselect', 'pwhere', 'ptake_while',
     'pskip_while', 'paggregate', 'pgroupby', 'psort', 'preverse',
     'pchain_with', 'pislice', 'pizip', 'ppassed', 'pindex', 'pstrip', 
-    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 'pas_type', 
-    'pto_type', 'totype', 'pas_type', 'pastype', 'pas_list', 'pto_list', 
+    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 'pto_type', 'totype',
+    'pas_type', 'pastype', 'pas_list', 'pto_list', 
     'paslist', 'ptolist', 'tolist', 'pas_tuple', 'pastuple', 'pto_tuple', 
-    'ptotuple', 'pas_dict', 'pasdict', 'pto_dict', 'ptodict', 'pnt', 'pstr',
-    'ps', 'pstre', 'pse', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp', 'pprint'
+    'ptotuple', 'pas_dict', 'pasdict', 'pto_dict', 'ptodict', 'pstr', 'ps', 
+    'pstre', 'pse', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp', 'pprint',
+    'pnt', 'listpipes', 'lp', 'pl'
 ]
 
 class Pipe:
@@ -412,7 +413,6 @@ class Pipe:
     def __call__(self, *args, **kwargs):
         return Pipe(lambda x: self.function(x, *args, **kwargs))
       
-
 @Pipe
 def ptake(iterable, qte):
     "Yield qte of elements in the given iterable."
@@ -695,6 +695,26 @@ def pmap(x, f):
     return tp(map(f, x))
 
 phelp = Pipe(help) # not of much use
+
+@Pipe
+def listpipes(x):
+    print([
+    'Pipe', 'ptake', 'ptail', 'pskip', 'pall', 'pany', 'paverage', 'pcount',
+    'pmax', 'pmin', 'ppermutations', 'pnetcat', 'pnetwrite',
+    'ptraverse', 'pconcat', 'pas_list', 'pas_tuple', 'pstdout', 'plineout',
+    'ptee', 'padd', 'pfirst', 'pchain', 'pselect', 'pwhere', 'ptake_while',
+    'pskip_while', 'paggregate', 'pgroupby', 'psort', 'preverse',
+    'pchain_with', 'pislice', 'pizip', 'ppassed', 'pindex', 'pstrip', 
+    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 
+    'pto_type--totype--pas_type--pastype', 
+    'pas_list--pto_list--paslist--ptolist--tolist', 
+    'pas_tuple--pastuple--pto_tuple--ptotuple', 
+    'pas_dict--pasdict--pto_dict--ptodict', 
+    'pstr--ps', 'pstre--pse', 'ptofile--pdump--dump', 'pmap', 'phelp', 
+    'pnt--pprint', 'pl--lp--listpipes'
+])
+
+pl = lp = listpipes
 
 pas_type = pto_type
 ptotype = pto_type

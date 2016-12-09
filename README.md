@@ -388,6 +388,7 @@ For some method used too frequently, there are transforms like `totype`, `tolist
     pmap --> map               # more intuitive than select
     phelp --> help
     plen --> pcount -->len
+    pl --> lp --> listpipes    # list all the available methods
 
 **About `ptofile`**
 
