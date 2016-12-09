@@ -11,9 +11,9 @@ As an exemple, here is the solution for the 2nd Euler Project exercise :
 
 Given fib a generator of fibonacci numbers :
 
-euler2 = fib() | where(lambda x: x % 2 == 0)
-               | take_while(lambda x: x < 4000000)
-               | add
+euler2 = fib() | pwhere(lambda x: x % 2 == 0)
+               | ptake_while(lambda x: x < 4000000)
+               | padd
 
 
 = Vocabulary =
@@ -25,12 +25,12 @@ euler2 = fib() | where(lambda x: x % 2 == 0)
 
 = Syntax =
 The basic symtax is to use a Pipe like in a shell :
->>> [1, 2, 3] | add
+>>> [1, 2, 3] | padd
 6
 
 A Pipe can be a function call, for exemple the Pipe function 'where' :
->>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
-<generator object <genexpr> at ...>
+>>> [1, 2, 3] | pwhere(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
+[2]
 
 A Pipe as a function is nothing more than a function returning
 a specialized Pipe.
@@ -44,25 +44,25 @@ select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
 
 Or using decorators :
 @Pipe
-def stdout(x):
+def pstdout(x):
     sys.stdout.write(str(x))
 
 = Existing Pipes in this module =
 
 stdout
     Outputs anything to the standard output
-    >>> "42" | stdout
+    >>> "42" | pstdout
     42
 
 lineout
     Outputs anything to the standard output followed by a line break
-    >>> 42 | lineout
+    >>> 42 | plineout
     42
 
 tee
     tee outputs to the standard output and yield unchanged items, usefull for
     debugging
-    >>> [1, 2, 3, 4, 5] | tee | add
+    >>> [1, 2, 3, 4, 5] | ptee | padd
     1
     2
     3
@@ -72,29 +72,29 @@ tee
 
 as_list
     Outputs an iterable as a list
-    >>> (0, 1, 2) | as_list
+    >>> (0, 1, 2) | pas_list
     [0, 1, 2]
 
 as_tuple
     Outputs an iterable as a tuple
-    >>> [1, 2, 3] | as_tuple
+    >>> [1, 2, 3] | pas_tuple
     (1, 2, 3)
 
 as_dict
     Outputs an iterable of tuples as a dictionary
-    [('a', 1), ('b', 2), ('c', 3)] | as_dict
+    [('a', 1), ('b', 2), ('c', 3)] | pas_dict
     {'a': 1, 'b': 2, 'c': 3}
 
 concat()
     Aggregates strings using given separator, or ", " by default
-    >>> [1, 2, 3, 4] | concat
+    >>> [1, 2, 3, 4] | pconcat
     '1, 2, 3, 4'
-    >>> [1, 2, 3, 4] | concat("#")
+    >>> [1, 2, 3, 4] | pconcat("#")
     '1#2#3#4'
 
 average
     Returns the average of the given iterable
-    >>> [1, 2, 3, 4, 5, 6] | average
+    >>> [1, 2, 3, 4, 5, 6] | paverage
     3.5
 
 netcat
@@ -104,160 +104,160 @@ netcat
     any iterable.
 
     "GET / HTTP/1.0\r\nHost: google.fr\r\n\r\n" \
-        | netcat('google.fr', 80)               \
-        | concat                                \
-        | stdout
+        | pnetcat('google.fr', 80)               \
+        | pconcat                                \
+        | pstdout
 
 netwrite
     Like netcat but don't read the socket after sending data
 
-count
+pcount
     Returns the length of the given iterable, counting elements one by one
-    >>> [1, 2, 3, 4, 5, 6] | count
+    >>> [1, 2, 3, 4, 5, 6] | pcount
     6
 
 add
     Returns the sum of all elements in the preceding iterable
-    >>> (1, 2, 3, 4, 5, 6) | add
+    >>> (1, 2, 3, 4, 5, 6) | padd
     21
 
 first
     Returns the first element of the given iterable
-    >>> (1, 2, 3, 4, 5, 6) | first
+    >>> (1, 2, 3, 4, 5, 6) | pfirst
     1
 
 chain
     Unfold preceding Iterable of Iterables
-    >>> [[1, 2], [3, 4], [5]] | chain | concat
+    >>> [[1, 2], [3, 4], [5]] | pchain | pconcat
     '1, 2, 3, 4, 5'
 
     Warning : chain only unfold iterable containing ONLY iterables :
-      [1, 2, [3]] | chain
+      [1, 2, [3]] | pchain
           Gives a TypeError: chain argument #1 must support iteration
           Consider using traverse
 
 traverse
     Recursively unfold iterables
-    >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat
+    >>> [[1, 2], [[[3], [[4]]], [5]]] | ptraverse | pconcat
     '1, 2, 3, 4, 5'
     >>> squares = (i * i for i in range(3))
-    >>> [[0, 1, 2], squares] | traverse | as_list
+    >>> [[0, 1, 2], squares] | ptraverse | pas_list
     [0, 1, 2, 0, 1, 4]
 
 select()
     Apply a conversion expression given as parameter
     to each element of the given iterable
-    >>> [1, 2, 3] | select(lambda x: x * x) | concat
+    >>> [1, 2, 3] | pselect(lambda x: x * x) | pconcat
     '1, 4, 9'
 
 where()
     Only yields the matching items of the given iterable
-    >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat
+    >>> [1, 2, 3] | pwhere(lambda x: x % 2 == 0) | pconcat
     '2'
 
 take_while()
     Like itertools.takewhile, yields elements of the
     given iterable while the predicat is true
-    >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat
+    >>> [1, 2, 3, 4] | ptake_while(lambda x: x < 3) | pconcat
     '1, 2'
 
 skip_while()
     Like itertools.dropwhile, skips elements of the given iterable
     while the predicat is true, then yields others
-    >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat
+    >>> [1, 2, 3, 4] | pskip_while(lambda x: x < 3) | pconcat
     '3, 4'
 
 chain_with()
     Like itertools.chain, yields elements of the given iterable,
     then yields elements of its parameters
-    >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat
+    >>> (1, 2, 3) | pchain_with([4, 5], [6]) | pconcat
     '1, 2, 3, 4, 5, 6'
 
 take()
     Yields the given quantity of elemenets from the given iterable, like head
     in shell script.
-    >>> (1, 2, 3, 4, 5) | take(2) | concat
+    >>> (1, 2, 3, 4, 5) | ptake(2) | pconcat
     '1, 2'
 
 tail()
     Yiels the given quantity of the last elements of the given iterable.
-    >>> (1, 2, 3, 4, 5) | tail(3) | concat
+    >>> (1, 2, 3, 4, 5) | ptail(3) | pconcat
     '3, 4, 5'
 
 skip()
     Skips the given quantity of elements from the given iterable, then yields
-    >>> (1, 2, 3, 4, 5) | skip(2) | concat
+    >>> (1, 2, 3, 4, 5) | pskip(2) | pconcat
     '3, 4, 5'
 
 islice()
     Just the itertools.islice
-    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat
+    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | pislice(2, 8, 2) | pconcat
     '3, 5, 7'
 
 izip()
     Just the itertools.izip
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-            | izip([9, 8, 7, 6, 5, 4, 3, 2, 1]) \
-            | concat
+            | pizip([9, 8, 7, 6, 5, 4, 3, 2, 1]) \
+            | pconcat
     '(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)'
 
 aggregate()
     Works as python reduce, the optional initializer must be passed as a
     keyword argument
-    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | aggregate(lambda x, y: x * y)
+    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | paggregate(lambda x, y: x * y)
     362880
 
-    >>> () | aggregate(lambda x, y: x + y, initializer=0)
+    >>> () | paggregate(lambda x, y: x + y, initializer=0)
     0
 
     Simulate concat :
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-            | aggregate(lambda x, y: str(x) + ', ' + str(y))
+            | paggregate(lambda x, y: str(x) + ', ' + str(y))
     '1, 2, 3, 4, 5, 6, 7, 8, 9'
 
 any()
     Returns True if any element of the given iterable satisfies the predicate
-    >>> (1, 3, 5, 6, 7) | any(lambda x: x >= 7)
+    >>> (1, 3, 5, 6, 7) | pany(lambda x: x >= 7)
     True
 
-    >>> (1, 3, 5, 6, 7) | any(lambda x: x > 7)
+    >>> (1, 3, 5, 6, 7) | pany(lambda x: x > 7)
     False
 
 all()
     Returns True if all elements of the given iterable
     satisfies the given predicate
-    >>> (1, 3, 5, 6, 7) | all(lambda x: x < 7)
+    >>> (1, 3, 5, 6, 7) | pall(lambda x: x < 7)
     False
 
-    >>> (1, 3, 5, 6, 7) | all(lambda x: x <= 7)
+    >>> (1, 3, 5, 6, 7) | pall(lambda x: x <= 7)
     True
 
 max()
     Returns the biggest element, using the given key function if
     provided (or else the identity)
 
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax(key=len)
     'qwerty'
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax()
     'zoog'
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax
     'zoog'
 
 min()
     Returns the smallest element, using the key function if provided
     (or else the identity)
 
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmin(key=len)
     'b'
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmin
     'aa'
 
 groupby()
     Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
     (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-            | groupby(lambda x: x % 2 and "Even" or "Odd")
-            | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', '))))
-            | concat(' / ')
+            | pgroupby(lambda x: x % 2 and "Even" or "Odd")
+            | pselect(lambda x: "%s : %s" % (x[0], (x[1] | pconcat(', '))))
+            | pconcat(' / ')
     'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
 
 sort()
@@ -265,86 +265,86 @@ sort()
     only), key, and reverse arguments. By default sorts using the
     identity function as the key.
 
-    >>> "python" | sort | concat("")
+    >>> "python" | psort | pconcat("")
     'hnopty'
-    >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
+    >>> [5, -4, 3, -2, 1] | psort(key=abs) | pconcat
     '1, -2, 3, -4, 5'
 
 reverse
     Like Python's built-in "reversed" primitive.
-    >>> [1, 2, 3] | reverse | concat
+    >>> [1, 2, 3] | preverse | pconcat
     '3, 2, 1'
 
 passed
     Like Python's pass.
-    >>> "something" | passed
+    >>> "something" | ppassed
     
 
 index
     Returns index of value in iterable
-    >>> [1,2,3,2,1] | index(2)
+    >>> [1,2,3,2,1] | pindex(2)
     1
-    >>> [1,2,3,2,1] | index(1,1)
+    >>> [1,2,3,2,1] | pindex(1,1)
     4
 
 strip
     Like Python's strip-method for str.
-    >>> '  abc   ' | strip
+    >>> '  abc   ' | pstrip
     'abc'
-    >>> '.,[abc] ] ' | strip('.,[] ')
+    >>> '.,[abc] ] ' | pstrip('.,[] ')
     'abc'
 
 rstrip
     Like Python's rstrip-method for str.
-    >>> '  abc   ' | rstrip
+    >>> '  abc   ' | prstrip
     '  abc'
-    >>> '.,[abc] ] ' | rstrip('.,[] ')
+    >>> '.,[abc] ] ' | prstrip('.,[] ')
     '.,[abc'
 
 lstrip
     Like Python's lstrip-method for str.
-    >>> 'abc   ' | lstrip
+    >>> 'abc   ' | plstrip
     'abc   '
-    >>> '.,[abc] ] ' | lstrip('.,[] ')
+    >>> '.,[abc] ] ' | plstrip('.,[] ')
     'abc] ] '
 
 run_with
-    >>> (1,10,2) | run_with(range) | as_list
+    >>> (1,10,2) | prun_with(range) | pas_list
     [1, 3, 5, 7, 9]
 
 t
     Like Haskell's operator ":"
-    >>> 0 | t(1) | t(2) == range(3) | as_list
+    >>> 0 | pt(1) | pt(2) == range(3) | pas_list
     True
 
 to_type
     Typecast
-    >>> range(5) | add | to_type(str) | t(' is summ!') | concat('')
+    >>> range(5) | padd | pto_type(str) | pt(' is summ!') | pconcat('')
     '10 is summ!'
 
 permutations()
     Returns all possible permutations
-    >>> 'ABC' | permutations(2) | concat(' ')
+    >>> 'ABC' | ppermutations(2) | pconcat(' ')
     "('A', 'B') ('A', 'C') ('B', 'A') ('B', 'C') ('C', 'A') ('C', 'B')"
 
-    >>> range(3) | permutations | concat('-')
+    >>> range(3) | ppermutations | pconcat('-')
     '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
 
 Euler project samples :
 
     # Find the sum of all the multiples of 3 or 5 below 1000.
-    euler1 = (itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000) | add) \
-           + (itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000) | add) \
-           - (itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000) | add)
+    euler1 = (itertools.count() | pselect(lambda x: x * 3) | ptake_while(lambda x: x < 1000) | padd) \
+           + (itertools.count() | pselect(lambda x: x * 5) | ptake_while(lambda x: x < 1000) | padd) \
+           - (itertools.count() | pselect(lambda x: x * 15) | ptake_while(lambda x: x < 1000) | padd)
     assert euler1 == 233168
 
     # Find the sum of all the even-valued terms in Fibonacci which do not exceed four million.
-    euler2 = fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000) | add
+    euler2 = fib() | pwhere(lambda x: x % 2 == 0) | ptake_while(lambda x: x < 4000000) | padd
     assert euler2 == 4613732
 
     # Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
     square = lambda x: x * x
-    euler6 = square(itertools.count(1) | take(100) | add) - (itertools.count(1) | take(100) | select(square) | add)
+    euler6 = square(itertools.count(1) | ptake(100) | padd) - (itertools.count(1) | ptake(100) | pselect(square) | padd)
     assert euler6 == 25164150
 
 
@@ -367,13 +367,17 @@ and dalexander for contributing"""
 __date__ = '10 Nov 2010'
 __version__ = '1.4'
 __all__ = [
-    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count',
-    'max', 'min', 'as_dict', 'permutations', 'netcat', 'netwrite',
-    'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
-    'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
-    'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type',
+    'Pipe', 'ptake', 'ptail', 'pskip', 'pall', 'pany', 'paverage', 'pcount',
+    'pmax', 'pmin', 'pas_dict', 'ppermutations', 'pnetcat', 'pnetwrite',
+    'ptraverse', 'pconcat', 'pas_list', 'pas_tuple', 'pstdout', 'plineout',
+    'ptee', 'padd', 'pfirst', 'pchain', 'pselect', 'pwhere', 'ptake_while',
+    'pskip_while', 'paggregate', 'pgroupby', 'psort', 'preverse',
+    'pchain_with', 'pislice', 'pizip', 'ppassed', 'pindex', 'pstrip', 
+    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 'pas_type', 
+    'pto_type', 'totype', 'pas_type', 'pastype', 'pas_list', 'pto_list', 
+    'paslist', 'ptolist', 'tolist', 'pas_tuple', 'pastuple', 'pto_tuple', 
+    'ptotuple', 'pas_dict', 'pasdict', 'pto_dict', 'ptodict', 'pnt', 'pstr',
+    'ps', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp'
 ]
 
 class Pipe:
@@ -399,11 +403,18 @@ class Pipe:
     def __ror__(self, other):
         return self.function(other)
 
+    def __lt__(self, other):
+        return self.function(other)
+
+    def __rrshift__(self, other):
+        return self.function(other)
+
     def __call__(self, *args, **kwargs):
         return Pipe(lambda x: self.function(x, *args, **kwargs))
+      
 
 @Pipe
-def take(iterable, qte):
+def ptake(iterable, qte):
     "Yield qte of elements in the given iterable."
     for item in iterable:
         if qte > 0:
@@ -413,7 +424,7 @@ def take(iterable, qte):
             return
 
 @Pipe
-def tail(iterable, qte):
+def ptail(iterable, qte):
     "Yield qte of elements in the given iterable."
     out = []
     for item in iterable:
@@ -423,7 +434,7 @@ def tail(iterable, qte):
     return out
         
 @Pipe
-def skip(iterable, qte):
+def pskip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
     for item in iterable:
         if qte == 0:
@@ -432,17 +443,17 @@ def skip(iterable, qte):
             qte -= 1
 
 @Pipe
-def all(iterable, pred):
+def pall(iterable, pred):
     "Returns True if ALL elements in the given iterable are true for the given pred function"
     return builtins.all(pred(x) for x in iterable)
 
 @Pipe
-def any(iterable, pred):
+def pany(iterable, pred):
     "Returns True if ANY element in the given iterable is True for the given pred function"
     return builtins.any(pred(x) for x in iterable)
 
 @Pipe
-def average(iterable):
+def paverage(iterable):
     """
     Build the average for the given iterable, starting with 0.0 as seed
     Will try a division by 0 if the iterable is empty...
@@ -455,37 +466,45 @@ def average(iterable):
     return total / qte
 
 @Pipe
-def count(iterable):
+def pcount(iterable):
     "Count the size of the given iterable, walking thrue it."
     count = 0
     for x in iterable:
         count += 1
     return count
+@Pipe
+def plen(iterable):
+    return len(iterable)
 
 @Pipe
-def max(iterable, **kwargs):
+def plen(iterable):
+    "自定义的 len, 基本上就是返回原 len"
+    return(len(iterable))
+
+@Pipe
+def pmax(iterable, **kwargs):
     return builtins.max(iterable, **kwargs)
 
 @Pipe
-def min(iterable, **kwargs):
+def pmin(iterable, **kwargs):
     return builtins.min(iterable, **kwargs)
 
 @Pipe
-def as_dict(iterable):
+def pas_dict(iterable):
     return dict(iterable)
 
 @Pipe
-def permutations(iterable, r=None):
+def ppermutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
     for x in itertools.permutations(iterable, r):
         yield x
 
 @Pipe
-def netcat(to_send, host, port):
+def pnetcat(to_send, host, port):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
-        for data in to_send | traverse:
+        for data in to_send | ptraverse:
             s.send(data)
         while 1:
             data = s.recv(4096)
@@ -493,142 +512,201 @@ def netcat(to_send, host, port):
             yield data
 
 @Pipe
-def netwrite(to_send, host, port):
+def pnetwrite(to_send, host, port):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
-        for data in to_send | traverse:
+        for data in to_send | ptraverse:
             s.send(data)
 
 @Pipe
-def traverse(args):
+def ptraverse(args):
     for arg in args:
         try:
             if isinstance(arg, str):
                 yield arg
             else:
-                for i in arg | traverse:
+                for i in arg | ptraverse:
                     yield i
         except TypeError:
             # not iterable --- output leaf
             yield arg
 
 @Pipe
-def concat(iterable, separator=", "):
+def pconcat(iterable, separator=", "):
     return separator.join(map(str,iterable))
 
 @Pipe
-def as_list(iterable):
+def pas_list(iterable):
     return list(iterable)
 
 @Pipe
-def as_tuple(iterable):
+def pas_tuple(iterable):
     return tuple(iterable)
 
 @Pipe
-def stdout(x):
+def pstdout(x):
     sys.stdout.write(str(x))
 
 @Pipe
-def lineout(x):
+def plineout(x):
     sys.stdout.write(str(x) + "\n")
 
 @Pipe
-def tee(iterable):
+def ptee(iterable):
     for item in iterable:
         sys.stdout.write(str(item) + "\n")
         yield item
 
 @Pipe
-def add(x):
+def padd(x):
     return sum(x)
 
 @Pipe
-def first(iterable):
+def pfirst(iterable):
     return next(iter(iterable))
 
 @Pipe
-def chain(iterable):
+def pchain(iterable):
     return itertools.chain(*iterable)
 
 @Pipe
-def select(iterable, selector):
-    return (selector(x) for x in iterable)
+def pselect(iterable, selector):
+    return [selector(x) for x in iterable]
 
 @Pipe
-def where(iterable, predicate):
-    return (x for x in iterable if (predicate(x)))
+def pwhere(iterable, predicate):
+    return [x for x in iterable if (predicate(x))]
 
 @Pipe
-def take_while(iterable, predicate):
+def ptake_while(iterable, predicate):
     return itertools.takewhile(predicate, iterable)
 
 @Pipe
-def skip_while(iterable, predicate):
+def pskip_while(iterable, predicate):
     return itertools.dropwhile(predicate, iterable)
 
 @Pipe
-def aggregate(iterable, function, **kwargs):
+def paggregate(iterable, function, **kwargs):
     if 'initializer' in kwargs:
         return reduce(function, iterable, kwargs['initializer'])
     else:
         return reduce(function, iterable)
 @Pipe
-def groupby(iterable, keyfunc):
+def pgroupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
 
 @Pipe
-def sort(iterable, **kwargs):
+def psort(iterable, **kwargs):
     return sorted(iterable, **kwargs)
 
 @Pipe
-def reverse(iterable):
+def preverse(iterable):
     return reversed(iterable)
 
 @Pipe
-def passed(x):
+def ppassed(x):
     pass
 
 @Pipe
-def index(iterable, value, start=0, stop=None):
+def pindex(iterable, value, start=0, stop=None):
     return iterable.index(value, start, stop or len(iterable))
 
 @Pipe
-def strip(iterable, chars=None):
+def pstrip(iterable, chars=None):
     return iterable.strip(chars)
 
 @Pipe
-def rstrip(iterable, chars=None):
+def prstrip(iterable, chars=None):
     return iterable.rstrip(chars)
 
 @Pipe
-def lstrip(iterable, chars=None):
+def plstrip(iterable, chars=None):
     return iterable.lstrip(chars)
 
 @Pipe
-def run_with(iterable, func):
+def prun_with(iterable, func):
     return  func(**iterable) if isinstance(iterable, dict) else \
             func( *iterable) if hasattr(iterable,'__iter__') else \
             func(  iterable)
 
 @Pipe
-def t(iterable, y):
+def pt(iterable, y):
     if hasattr(iterable,'__iter__') and not isinstance(iterable, str):
         return iterable + type(iterable)([y])
     else:
         return [iterable, y]
 
 @Pipe
-def to_type(x, t):
+def pto_type(x, t):
     return t(x)
 
-chain_with = Pipe(itertools.chain)
-islice = Pipe(itertools.islice)
+
+pchain_with = Pipe(itertools.chain)
+pislice = Pipe(itertools.islice)
 
 # Python 2 & 3 compatibility
 if "izip" in dir(itertools):
-    izip = Pipe(itertools.izip)
+    pizip = Pipe(itertools.izip)
 else:
-    izip = Pipe(zip)
+    pizip = Pipe(zip)
+
+#
+#************************************
+# 自定义部分
+#************************************
+#
+# print the result
+pnt = Pipe(print)
+
+# convert the result to str
+pstr = Pipe(str)
+ps = pstr
+
+# dump the result to file
+@Pipe
+def ptofile(x, filename=None, override=False, encoding=None,
+     sep=''):
+    if override: 
+        mode='w'
+    else:
+        mode='a'
+    if not filename:
+        import os
+        filename = os.path.join(os.getcwd(), 'temptxtfile.txt')
+    with open(filename, mode, encoding=encoding) as file:
+        if hasattr(x,'__iter__') and not isinstance(x, str):
+            x = map(str, x)
+            file.write(sep.join(x))
+        else:
+            file.write(str(x))
+dump = pdump = ptofile
+
+@Pipe
+def pmap(x, f):
+    tp = type(x)
+    if tp is range:
+        tp = list
+    return tp(map(f, x))
+
+phelp = Pipe(help) # not of much use
+
+pas_type = pto_type
+ptotype = pto_type
+pastype = pto_type
+totype = pto_type # because totype is used too much
+
+pto_dict = pas_dict
+ptodict = pas_dict
+pasdict = pas_dict
+
+pto_list = pas_list
+ptolist = pas_list
+paslist = pas_list
+tolist = pas_list  # because tolist is used too much
+
+pto_tuple = pas_tuple
+ptotuple = pto_tuple
+pastuple = pas_tuple
 
 if __name__ == "__main__":
     import doctest

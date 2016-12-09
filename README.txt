@@ -1,3 +1,6 @@
+修改，多数内容加 p 前缀
+因为有部分函数名重名，会覆盖原名称。比如：max all any reverse  等等
+
 Help on module pipe:
 
 NAME

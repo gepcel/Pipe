@@ -9,6 +9,7 @@ eggs
 parts
 bin
 develop-eggs
+__pycache__
 .installed.cfg
 
 # Installer logs
