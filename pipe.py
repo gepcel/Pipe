@@ -378,7 +378,7 @@ __all__ = [
     'paslist', 'ptolist', 'tolist', 'pas_tuple', 'pastuple', 'pto_tuple', 
     'ptotuple', 'pas_dict', 'pasdict', 'pto_dict', 'ptodict', 'pstr', 'ps', 
     'pstre', 'pse', 'ptofile', 'pdump', 'dump', 'pmap', 'phelp', 'pprint',
-    'pnt', 'listpipes', 'lp', 'pl'
+    'pnt', 'listpipes', 'lp', 'pl', 'pipe'
 ]
 
 class Pipe:
@@ -697,23 +697,13 @@ def pmap(x, f):
 phelp = Pipe(help) # not of much use
 
 @Pipe
-def listpipes(x):
-    print([
-    'Pipe', 'ptake', 'ptail', 'pskip', 'pall', 'pany', 'paverage', 'pcount',
-    'pmax', 'pmin', 'ppermutations', 'pnetcat', 'pnetwrite',
-    'ptraverse', 'pconcat', 'pas_list', 'pas_tuple', 'pstdout', 'plineout',
-    'ptee', 'padd', 'pfirst', 'pchain', 'pselect', 'pwhere', 'ptake_while',
-    'pskip_while', 'paggregate', 'pgroupby', 'psort', 'preverse',
-    'pchain_with', 'pislice', 'pizip', 'ppassed', 'pindex', 'pstrip', 
-    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 
-    'pto_type--totype--pas_type--pastype', 
-    'pas_list--pto_list--paslist--ptolist--tolist', 
-    'pas_tuple--pastuple--pto_tuple--ptotuple', 
-    'pas_dict--pasdict--pto_dict--ptodict', 
-    'pstr--ps', 'pstre--pse', 'ptofile--pdump--dump', 'pmap', 'phelp', 
-    'pnt--pprint', 'pl--lp--listpipes'
-])
+def pipe(arg, func, *args, **kwargs):
+    '''
+    Just pipe anything to any function with any parameters
+    '''
+    return func(arg, *args, **kwargs)
 
+# aliases
 pl = lp = listpipes
 
 pas_type = pto_type
@@ -733,6 +723,25 @@ tolist = pas_list  # because tolist is used too much
 pto_tuple = pas_tuple
 ptotuple = pto_tuple
 pastuple = pas_tuple
+
+@Pipe
+def listpipes(x):
+    print([
+    'Pipe', 'ptake', 'ptail', 'pskip', 'pall', 'pany', 'paverage', 'pcount',
+    'pmax', 'pmin', 'ppermutations', 'pnetcat', 'pnetwrite',
+    'ptraverse', 'pconcat', 'pas_list', 'pas_tuple', 'pstdout', 'plineout',
+    'ptee', 'padd', 'pfirst', 'pchain', 'pselect', 'pwhere', 'ptake_while',
+    'pskip_while', 'paggregate', 'pgroupby', 'psort', 'preverse',
+    'pchain_with', 'pislice', 'pizip', 'ppassed', 'pindex', 'pstrip', 
+    'plstrip', 'prstrip', 'prun_with', 'pt', 'plen', 
+    'pto_type--totype--pas_type--pastype', 
+    'pas_list--pto_list--paslist--ptolist--tolist', 
+    'pas_tuple--pastuple--pto_tuple--ptotuple', 
+    'pas_dict--pasdict--pto_dict--ptodict', 
+    'pstr--ps', 'pstre--pse', 'ptofile--pdump--dump', 'pmap', 'phelp', 
+    'pnt--pprint', 'pl--lp--listpipes', 'pipe'
+])
+
 
 if __name__ == "__main__":
     import doctest
