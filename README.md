@@ -389,7 +389,8 @@ For some method used too frequently, there are transforms like `totype`, `tolist
     phelp --> help
     plen --> pcount -->len
     pl --> lp --> listpipes    # list all the available methods
-
+    pipe                       # to pipe anything to any function with any parameters,
+                               # need more testing
 **About `ptofile`**
 
 Example: `[1,2,3] | ptofile(filename=None, override=False, encoding=None, sep='\n')`
